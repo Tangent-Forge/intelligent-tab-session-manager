@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 16px;
+      background-color: #f5f5f5;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #2196F3, #1976D2);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    .header p {
+      margin: 8px 0 0 0;
+      opacity: 0.9;
+      font-size: 14px;
+    }
+    
+    .section {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .section h2 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      color: #333;
+      border-bottom: 2px solid #2196F3;
+      padding-bottom: 8px;
+    }
+    
+    .session-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .session-item {
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .session-item:hover {
+      border-color: #2196F3;
+      background: #E3F2FD;
+    }
+    
+    .session-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .session-name {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .session-meta {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .session-tags {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    
+    .tag {
+      background: #E3F2FD;
+      color: #1976D2;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    
+    .template-card {
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+    
+    .template-card:hover {
+      border-color: #2196F3;
+      background: #E3F2FD;
+    }
+    
+    .template-name {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .template-desc {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .stat-card {
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2196F3;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .btn-primary {
+      background-color: #2196F3;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #1976D2;
+    }
+    
+    .btn-secondary {
+      background-color: #757575;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #616161;
+    }
+    
+    .btn-danger {
+      background-color: #F44336;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: #D32F2F;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #333;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+    
+    .error {
+      background-color: #ffebee;
+      color: #c62828;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    
+    .success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📑 Intelligent Tab & Session Manager</h1>
+    <p>Organize and manage your browser sessions</p>
+  </div>
+
+  <div id="loading" class="loading">Loading...</div>
+  <div id="error" class="error hidden"></div>
+  <div id="success" class="success hidden"></div>
+
+  <div id="content" class="hidden">
+    <!-- Stats Section -->
+    <div class="section">
+      <h2>📊 Statistics</h2>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-sessions">0</div>
+          <div class="stat-label">Total Sessions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-tabs">0</div>
+          <div class="stat-label">Total Tabs</div>
+        </div>
+        <div class="stat-card">
+          <div="stat-value" id="stat-groups">0</div>
+          <div class="stat-label">Tab Groups</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-autosaved">0</div>
+          <div class="stat-label">Auto-Saved</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Session -->
+    <div class="section">
+      <h2➕ Create New Session</h2>
+      <div class="form-group">
+        <label for="session-name">Session Name</label>
+        <input type="text" id="session-name" placeholder="e.g., Project Alpha Workspace">
+      </div>
+      <div class="form-group">
+        <label for="session-tags">Tags (comma-separated)</label>
+        <input type="text" id="session-tags" placeholder="e.g., development, project-alpha">
+      </div>
+      <button class="btn btn-primary" onclick="createSession()">Save Session</button>
+    </div>
+
+    <!-- Sessions List -->
+    <div class="section">
+      <h2>📁 Saved Sessions</h2>
+      <ul class="session-list" id="session-list">
+        <!-- Sessions will be loaded here -->
+      </ul>
+    </div>
+
+    <!-- Templates -->
+    <div class="section">
+      <h2>📋 Workspace Templates</h2>
+      <div id="template-list">
+        <!-- Templates will be loaded here -->
+      </div>
+    </div>
+
+    <!-- Auto-Save -->
+    <div class="section">
+      <h2>💾 Auto-Save</h2>
+      <button class="btn btn-secondary" onclick="toggleAutoSave()" id="autosave-btn">Enable Auto-Save</button>
+      <p style="font-size:12px; color:#666; margin-top:8px;">Auto-save every 5 minutes</p>
+    </div>
+  </div>
+
+  <script>
+    let sessions = [];
+    let templates = [];
+    let autoSaveEnabled = false;
+
+    function loadData() {
+      showLoading('Loading data...');
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          hideLoading();
+          updateStats(data.stats);
+          sessions = data.sessions;
+          updateSessionList();
+          templates = data.templates;
+          updateTemplateList();
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          showError('Failed to load data: ' + error.message);
+        })
+        .call(function() {
+          return {
+            stats: AnalyticsTracker.getUsageStats(),
+            sessions: SessionManager.listSessions(),
+            templates: TemplateManager.listTemplates()
+          };
+        });
+    }
+
+    function updateStats(stats) {
+      document.getElementById('stat-sessions').textContent = stats.totalSessions;
+      document.getElementById('stat-tabs').textContent = stats.totalTabs;
+      document.getElementById('stat-groups').textContent = stats.totalGroups;
+      document.getElementById('stat-autosaved').textContent = stats.autoSavedCount;
+    }
+
+    function updateSessionList() {
+      const list = document.getElementById('session-list');
+      list.innerHTML = '';
+      
+      if (sessions.length === 0) {
+        list.innerHTML = '<li style="text-align:center; padding:20px; color:#999;">No sessions saved yet</li>';
+        return;
+      }
+      
+      sessions.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified)).forEach(session => {
+        const li = document.createElement('li');
+        li.className = 'session-item';
+        li.onclick = () => showSessionDetails(session);
+        
+        const tagsHtml = session.tags && session.tags.length > 0 
+          ? `<div class="session-tags">${session.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`
+          : '';
+        
+        li.innerHTML = `
+          <div class="session-header">
+            <span class="session-name">${session.name}</span>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="event.stopPropagation(); deleteSession('${session.id}')">Delete</button>
+          </div>
+          <div class="session-meta">
+            Tabs: ${session.tabs.length} | Groups: ${session.groups.length} | 
+            Modified: ${new Date(session.lastModified).toLocaleString()}
+          </div>
+          ${tagsHtml}
+        `;
+        
+        list.appendChild(li);
+      });
+    }
+
+    function updateTemplateList() {
+      const list = document.getElementById('template-list');
+      list.innerHTML = '';
+      
+      if (templates.length === 0) {
+        list.innerHTML = '<p style="text-align:center; color:#999;">No templates available</p>';
+        return;
+      }
+      
+      templates.forEach(template => {
+        const div = document.createElement('div');
+        div.className = 'template-card';
+        div.onclick = () => applyTemplate(template.id);
+        div.innerHTML = `
+          <div class="template-name">${template.name}</div>
+          <div class="template-desc">${template.layout.groups ? template.layout.groups.length + ' groups' : 'No groups'}</div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function createSession() {
+      const name = document.getElementById('session-name').value;
+      const tags = document.getElementById('session-tags').value;
+      
+      if (!name) {
+        showError('Please enter a session name');
+        return;
+      }
+      
+      showLoading('Saving session...');
+      
+      const sessionData = {
+        name: name,
+        tags: tags ? tags.split(',').map(t => t.trim()) : [],
+        tabs: [],
+        groups: []
+      };
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          hideLoading();
+          showSuccess('Session saved successfully');
+          document.getElementById('session-name').value = '';
+          document.getElementById('session-tags').value = '';
+          loadData();
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          showError('Failed to save session: ' + error.message);
+        })
+        .saveSession(sessionData);
+    }
+
+    function deleteSession(sessionId) {
+      if (!confirm('Are you sure you want to delete this session?')) {
+        return;
+      }
+      
+      showLoading('Deleting session...');
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          hideLoading();
+          showSuccess('Session deleted');
+          loadData();
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          showError('Failed to delete session: ' + error.message);
+        })
+        .deleteSession(sessionId);
+    }
+
+    function applyTemplate(templateId) {
+      showLoading('Applying template...');
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          hideLoading();
+          showSuccess('Template applied! New session created.');
+          loadData();
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          showError('Failed to apply template: ' + error.message);
+        })
+        .applyTemplate(templateId);
+    }
+
+    function toggleAutoSave() {
+      const btn = document.getElementById('autosave-btn');
+      
+      if (!autoSaveEnabled) {
+        google.script.run
+          .withSuccessHandler(function(result) {
+            autoSaveEnabled = true;
+            btn.textContent = 'Disable Auto-Save';
+            btn.classList.remove('btn-secondary');
+            btn.classList.add('btn-primary');
+            showSuccess('Auto-save enabled');
+          })
+          .withFailureHandler(function(error) {
+            showError('Failed to enable auto-save: ' + error.message);
+          })
+          .enableAutoSave(300000);
+      } else {
+        google.script.run
+          .withSuccessHandler(function(result) {
+            autoSaveEnabled = false;
+            btn.textContent = 'Enable Auto-Save';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-secondary');
+            showSuccess('Auto-save disabled');
+          })
+          .withFailureHandler(function(error) {
+            showError('Failed to disable auto-save: ' + error.message);
+          })
+          .disableAutoSave();
+      }
+    }
+
+    function showSessionDetails(session) {
+      alert(`Session: ${session.name}\nTabs: ${session.tabs.length}\nGroups: ${session.groups.length}\nTags: ${session.tags.join(', ') || 'None'}`);
+    }
+
+    function showLoading(message) {
+      document.getElementById('loading').textContent = message;
+      document.getElementById('loading').classList.remove('hidden');
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').classList.add('hidden');
+    }
+
+    function showError(message) {
+      const errorDiv = document.getElementById('error');
+      errorDiv.textContent = message;
+      errorDiv.classList.remove('hidden');
+      setTimeout(() => errorDiv.classList.add('hidden'), 5000);
+    }
+
+    function showSuccess(message) {
+      const successDiv = document.getElementById('success');
+      successDiv.textContent = message;
+      successDiv.classList.remove('hidden');
+      setTimeout(() => successDiv.classList.add('hidden'), 3000);
+    }
+
+    // Initialize
+    loadData();
+  </script>
+</body>
+</html>
